@@ -1,66 +1,39 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
-#define int long long
 
-
-int32_t* Lps(string pattern){
-    int len = pattern.size();
-    int32_t* lps = new int32_t[len];
-
-    lps[0] = 0;
-    int i=1, j=0;
-
-    while(i<len){
-        if(pattern[i] == pattern[j]){
-            lps[i] = j+1;
+vector<int> prefix(string s) {
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+        int j = pi[i-1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j-1];
+        if (s[i] == s[j])
             j++;
-            i++;
-        }
-        else{
-            if(j!=0){
-                j = lps[j-1];
-            }
-            else{
-                lps[i] = 0;
-                i++;
-            }
-        }
+        pi[i] = j;
     }
-    return lps;
+    return pi;
 }
 
-int32_t KmpSearch(string str, string pat){
-    int lens = str.size();
-    int lenp = pat.size();
-
-    int32_t* lps = Lps(pat);
-    int i=0, j=0, count=0;
-    while(i<lens &&  j<lenp){
-        if(str[i] == pat[j]){
-            i++;
-            j++;
-        }
-        else{
-            if(j!=0){
-                j = lps[j-1];
-            }
-            else{
-                i++;
-            }
-        }
-        if(j==lenp){
-            j=0;
+void searchString(string txt, string pattern){
+    string str = pattern + "$" + txt;
+    long long n = str.size(), patSize = pattern.size();
+    vector<int> Z = prefix(str);
+    long long count=0;
+    for(long long i=0;i<n;i++){
+        // cout<<Z[i]<<" ";
+        if(Z[i] == patSize){
             count++;
         }
     }
-    return count;
-    
+    cout<<count<<endl;
 }
 
-int32_t main()
-{
-    string st, pat;
-    cin >> st >> pat;
-    cout << KmpSearch(st, pat) << endl;
+int main(){
+    string txt;
+    string pattern;
+    cin>>txt>>pattern;
+    // cout<<pattern.length()<<endl;
+    searchString(txt, pattern);
     return 0;
 }
